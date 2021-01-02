@@ -1,0 +1,8 @@
+[Unit]
+Description=RedLooper Application
+
+[Service]
+ExecStart=/usr/local/bin/redlooper
+
+[Install]
+WantedBy=default.target
