@@ -1,8 +1,10 @@
 [Unit]
 Description=RedLooper Application
+After=graphical.target
+Wants=graphical.target
 
 [Service]
-ExecStart=/usr/local/bin/redlooper
+ExecStart=/bin/bash -c "export DISPLAY=:0; export XAUTHORITY=/home/pi/.Xauthority; redlooper"
 
 [Install]
 WantedBy=default.target
