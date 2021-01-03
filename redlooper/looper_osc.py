@@ -34,7 +34,8 @@ class Looper:
 
         # callbacks
         self.state_callback = None
-        self.loop_progress_callback = None
+        self.loop_position_update_callback = None
+        self.loop_length_update_callback = None
         self.on_connected = on_connected
 
         # OSC client and server
@@ -119,8 +120,11 @@ class Looper:
     def set_state_callback(self, callback):
         self.state_callback = callback
 
-    def set_loop_progress_callback(self, callback):
-        self.loop_progress_callback = callback
+    def set_loop_position_update_callback(self, callback):
+        self.loop_position_update_callback = callback
+
+    def set_loop_length_update_callback(self, callback):
+        self.loop_length_update_callback = callback
 
     def send_sldown(self, command):
         liblo.send(self.target, "/sl/-1/down", command)
@@ -183,16 +187,16 @@ class Looper:
 
     def receive_loop_len(self, path, answer):
         self.loop_len = answer[2]
+        if self.loop_length_update_callback:
+            self.loop_length_update_callback(self.loop_len)
 
     def receive_loop_pos(self, path, answer):
         self.loop_pos = answer[2]
+        if self.loop_position_update_callback:
+            self.loop_position_update_callback(self.loop_pos)
 
     def receive_ping(self, path, answer):
         self.ping_event.set()
-
-    def loop_progress_callback_(self):
-        if self.loop_progress_callback:
-            self.loop_progress_callback(self.loop_pos, self.loop_len)
 
 
 class SooperLooper(threading.Thread):
