@@ -114,7 +114,7 @@ class Looper:
         liblo.send(self.target, "/sl/-1/register_auto_update", "state", 100, self.home_url, "/state")
 
     def register_loop_progress_update(self):
-        liblo.send(self.target, "/sl/-1/register_update", "loop_len", 100, self.home_url, "/loop_len")
+        liblo.send(self.target, "/sl/-1/register_auto_update", "loop_len", 100, self.home_url, "/loop_len")
         liblo.send(self.target, "/sl/-1/register_auto_update", "loop_pos", 100, self.home_url, "/loop_pos")
 
     def set_state_callback(self, callback):
