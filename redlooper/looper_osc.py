@@ -34,6 +34,7 @@ class Looper:
 
         # callbacks
         self.state_callback = None
+        self.loop_progress_callback = None
         self.on_connected = on_connected
 
         # OSC client and server
@@ -42,7 +43,12 @@ class Looper:
         self.home_url = home_ip + ":" + home_port
         self.home_server.add_method("/state", "isf", self.receive_state, self)
         self.home_server.add_method("/ping", None, self.receive_ping, self)
+        self.home_server.add_method("/loop_len", None, self.receive_loop_len, self)
+        self.home_server.add_method("/loop_pos", None, self.receive_loop_pos, self)
         self.loop_count = 1
+
+        self.loop_len = 0
+        self.loop_pos = 0
 
         # Sooperlooper process
         self.sooperlooper = SooperLooper(gui=False, on_exit=on_exit)
@@ -56,6 +62,7 @@ class Looper:
         self.connect_jack()
         self.connect()
         self.register_state_update()
+        self.register_loop_progress_update()
         return self
 
     def __exit__(self, *exc):
@@ -105,8 +112,15 @@ class Looper:
     def register_state_update(self):
         liblo.send(self.target, "/sl/-1/register_auto_update", "state", 100, self.home_url, "/state")
 
+    def register_loop_progress_update(self):
+        liblo.send(self.target, "/sl/-1/register_update", "loop_len", 100, self.home_url, "/loop_len")
+        liblo.send(self.target, "/sl/-1/register_auto_update", "loop_pos", 100, self.home_url, "/loop_pos")
+
     def set_state_callback(self, callback):
         self.state_callback = callback
+
+    def set_loop_progress_callback(self, callback):
+        self.loop_progress_callback = callback
 
     def send_sldown(self, command):
         liblo.send(self.target, "/sl/-1/down", command)
@@ -167,8 +181,18 @@ class Looper:
         if self.state_callback:
             self.state_callback(self.state)
 
+    def receive_loop_len(self, path, answer):
+        self.loop_len = answer[2]
+
+    def receive_loop_pos(self, path, answer):
+        self.loop_pos = answer[2]
+
     def receive_ping(self, path, answer):
         self.ping_event.set()
+
+    def loop_progress_callback_(self):
+        if self.loop_progress_callback:
+            self.loop_progress_callback(self.loop_pos, self.loop_len)
 
 
 class SooperLooper(threading.Thread):
