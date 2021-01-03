@@ -5,6 +5,7 @@ sudo apt-get install jackd
 sudo pip3 install -U git+https://github.com/basil-huber/redlooper.git#egg=redlooper
 
 # autostart
-mkdir -p ~/.config/systemd/user
-cp redlooper.service ~/.config/systemd/user
-systemctl --user enable redlooper
+sudo cp redlooper.desktop /home/pi/.config/autostart/
+#mkdir -p ~/.config/systemd/user
+#cp redlooper.service ~/.config/systemd/user
+#systemctl --user enable redlooper
