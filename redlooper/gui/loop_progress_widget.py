@@ -1,14 +1,20 @@
 import tkinter
+from tkinter.font import Font
 
 
 class DialWidget(tkinter.Canvas):
     RADIUS_RATIO = 0.7
 
-    def __init__(self, master=None, **kwargs):
+    def __init__(self, master=None, font=None, **kwargs):
         super().__init__(master=master, **kwargs)
         self.arc_id = None
         self.center_circle_id = None
         self.text_id = None
+
+        if font:
+            self.font = font
+        else:
+            self.font = Font(size=50)
 
         self.pack(fill=tkinter.BOTH, expand=tkinter.TRUE)
         self.update()
@@ -41,7 +47,7 @@ class DialWidget(tkinter.Canvas):
         return self.create_oval(*top_left, *bottom_right, **kwargs)
 
     def draw_text_(self, center, text):
-        return self.create_text(*center, anchor='center', text=text)
+        return self.create_text(*center, anchor='center', text=text, font=self.font)
 
 
 class TimerWidget(DialWidget):
