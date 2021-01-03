@@ -4,14 +4,15 @@ import tkinter
 class DialWidget(tkinter.Canvas):
     RADIUS_RATIO = 0.7
 
-    def __init__(self, master=None, width=None, height=None):
-        super().__init__(master=master, width=width, height=height)
+    def __init__(self, master=None, **kwargs):
+        super().__init__(master=master, **kwargs)
         self.arc_id = None
         self.center_circle_id = None
         self.text_id = None
 
-        self.pack()
-        self.draw_(width, height)
+        self.pack(fill=tkinter.BOTH, expand=tkinter.TRUE)
+        self.update()
+        self.draw_()
 
     def set_extent(self, extent_fraction):
         extent_degrees = extent_fraction * 360.0
@@ -20,10 +21,11 @@ class DialWidget(tkinter.Canvas):
     def set_center_text(self, text):
         self.itemconfigure(self.text_id, text=text)
 
-    def draw_(self, width, height):
-        radius_outer = min(width, height)/2.0
+    def draw_(self):
+        center = self.winfo_width() / 2.0, self.winfo_height() / 2.0
+        radius_outer = min(center)
         radius_inner = radius_outer * self.RADIUS_RATIO
-        center = width/2, height/2
+
         self.arc_id = self.draw_arc_(center, radius_outer, start=90, extent=0, fill='blue')
         self.center_circle_id = self.draw_oval_(center, radius_inner, fill=self['background'])
         self.text_id = self.draw_text_(center, text='')

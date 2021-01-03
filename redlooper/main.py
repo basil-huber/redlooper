@@ -6,7 +6,7 @@ import time
 
 def main():
     window = MainWindow()
-    lpw = LoopProgressWidget(window, 500, 300)
+    lpw = LoopProgressWidget(window)
 
     looper_connected_event = Event()
     def looper_connected():
