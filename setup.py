@@ -5,7 +5,7 @@ setup(name='redlooper',
       description='Raspberry Pi Looper Pedal',
       author='Basil',
       author_email='basil.huber@gmail.com',
-      packages=['redlooper'],
+      packages=['redlooper', 'redlooper.gui'],
       install_requires=['cython', 'pyliblo', 'JACK-Client', 'RPi.GPIO'],
       entry_points={'console_scripts': ['redlooper=redlooper.main:main']},
       zip_safe=False)
