@@ -80,8 +80,8 @@ class TimerWidget(DialWidget):
     @staticmethod
     def format_time_(seconds):
         minutes = int(seconds / 60)
-        seconds = int(seconds % 60)
-        return '%.2d:%.2d' % (minutes, seconds)
+        seconds = seconds % 60
+        return '%.2d:%05.2f' % (minutes, seconds)
 
 
 class LoopProgressWidget(TimerWidget):
