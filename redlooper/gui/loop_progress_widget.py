@@ -1,5 +1,6 @@
 import tkinter
 from tkinter.font import Font
+from enum import Enum
 
 
 class DialWidget(tkinter.Canvas):
@@ -24,6 +25,15 @@ class DialWidget(tkinter.Canvas):
         extent_degrees = extent_fraction * 360.0
         self.itemconfigure(self.arc_id, extent=-extent_degrees)
 
+    def set_radius(self, radius):
+        center = self.winfo_width() / 2.0, self.winfo_height() / 2.0
+        top_left = center[0] - radius, center[1] - radius
+        bottom_right = center[0] + radius, center[1] + radius
+        self.coords(self.arc_id, *top_left, *bottom_right)
+
+    def set_fill(self, fill):
+        self.itemconfigure(self.arc_id, fill=fill)
+
     def set_center_text(self, text):
         self.itemconfigure(self.text_id, text=text)
 
@@ -35,6 +45,10 @@ class DialWidget(tkinter.Canvas):
         self.arc_id = self.draw_arc_(center, radius_outer, start=90, extent=0, fill='blue')
         self.center_circle_id = self.draw_oval_(center, radius_inner, fill=self['background'])
         self.text_id = self.draw_text_(center, text='')
+
+    def get_radius_max(self):
+        center = self.winfo_width() / 2.0, self.winfo_height() / 2.0
+        return min(center)
 
     def draw_arc_(self, center, radius, **kwargs):
         top_left = center[0] - radius, center[1] - radius
@@ -51,10 +65,15 @@ class DialWidget(tkinter.Canvas):
 
 
 class TimerWidget(DialWidget):
+    class Mode(Enum):
+        PULSING = 0
+        FILLING = 1
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.timeout_s = 0
         self.time_elapsed_s = 0
+        self.mode = TimerWidget.Mode.PULSING
 
     def set_timeout(self, timeout_s):
         self.timeout_s = timeout_s
@@ -64,9 +83,25 @@ class TimerWidget(DialWidget):
         self.time_elapsed_s = time_s
         self.update_graphics_()
 
+    def set_mode(self, mode):
+        self.mode = mode
+        if mode == TimerWidget.Mode.PULSING:
+            self.set_extent(0.999)
+            self.set_fill('green')
+        else:
+            self.set_extent(0)
+            self.set_radius(self.get_radius_max())
+            self.set_fill('blue')
+
     def update_graphics_(self):
         self.set_center_text(self.get_time_elapsed_string_())
-        self.set_extent(self.get_elapsed_time_fraction_())
+        if self.mode == TimerWidget.Mode.FILLING:
+            self.set_extent(self.get_elapsed_time_fraction_())
+        else:
+            radius = self.get_radius_max() * (self.RADIUS_RATIO + 0.3 * (self.time_elapsed_s % 1))
+            print(self.get_radius_max() ,self.RADIUS_RATIO, (1 - self.time_elapsed_s % 1))
+
+            self.set_radius(radius)
 
     def get_elapsed_time_fraction_(self):
         if self.timeout_s:

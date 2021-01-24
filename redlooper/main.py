@@ -3,7 +3,6 @@ from redlooper.gui import MainWindow, LoopProgressWidget
 from threading import Event
 import time
 
-
 def main():
     window = MainWindow()
     lpw = LoopProgressWidget(window)
@@ -46,6 +45,12 @@ def main():
                 print('right released LONG')
                 looper.reset()
 
+            def state_changed_callback(state):
+                if state == Looper.State.RECORDING:
+                    lpw.set_mode(lpw.Mode.PULSING)
+                else:
+                    window.set_mode(lpw.Mode.FILLING)
+
             pedal.button_left.set_callback_released(button_left_released)
             pedal.button_left.set_callback_released_long(button_left_released_long)
             pedal.button_right.set_callback_released(button_right_released)
@@ -53,6 +58,7 @@ def main():
 
             looper.set_loop_position_update_callback(lpw.set_loop_position)
             looper.set_loop_length_update_callback(lpw.set_loop_length)
+            looper.set_state_callback(state_changed_callback)
 
             ###########################
             #       Main loop         #
