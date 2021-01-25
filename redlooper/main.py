@@ -1,20 +1,26 @@
 from redlooper import Looper, PyPedal
 from redlooper.gui import MainWindow, LoopProgressWidget
 from threading import Event
-import time
+import logging, sys
+
 
 def main():
-    window = MainWindow()
-    lpw = LoopProgressWidget(window)
-
-    looper_connected_event = Event()
-    def looper_connected():
-        looper_connected_event.set()
-        print('Looper connected!!!!!!!!!!!!!!')
-
-    pedal = PyPedal()
+    logging.basicConfig(filename='redlooper.log', level=logging.DEBUG, format='%(asctime)s %(message)s')
+    logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
+    logging.info('------------- Starting ---------------')
 
     try:
+        window = MainWindow()
+        lpw = LoopProgressWidget(window)
+
+        looper_connected_event = Event()
+        def looper_connected():
+            looper_connected_event.set()
+            logging.info('Looper connected')
+
+        pedal = PyPedal()
+
+
         with Looper(on_connected=looper_connected) as looper:
             #######################################
             # wait for looper and pedal connected #
@@ -64,7 +70,8 @@ def main():
             #       Main loop         #
             ###########################
             window.mainloop()
-    finally:
+    except:
+        logging.exception('Exception')
         pass
 
 

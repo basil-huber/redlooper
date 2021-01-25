@@ -5,6 +5,7 @@ import subprocess
 import jack
 from time import sleep
 import threading
+import logging
 
 
 class Looper:
@@ -98,9 +99,9 @@ class Looper:
         self.jack.connect('sooperlooper:loop0_out_2', 'system:playback_2')
 
     def connect(self, timeout=None):
-        print('sooperlooper starting')
+        logging.info('sooperlooper starting')
         self.home_server.start()
-        print('pinignig')
+        logging.info('pinignig')
         while True:
             if self.ping(timeout):
                 break
