@@ -4,7 +4,7 @@ import time
 
 class GPIOButton:
     BOUNCE_TIME = 70   # [ms]
-    LONG_PRESS_TIME = 1  # [s]
+    LONG_PRESS_TIME = 3  # [s]
 
     def __init__(self, gpio_bcm, callback_pressed=None, callback_released=None, callback_released_long=None):
         self.is_pressed = False
@@ -25,9 +25,9 @@ class GPIOButton:
     def set_callback_released_long(self, callback_released_long):
         self.callback_released_long = callback_released_long
 
-    def gpio_callback_(self, channel_unused):
-        func = None
-        if self.is_pressed:
+    def gpio_callback_(self, channel):
+        self.is_pressed = GPIO.input(channel) == GPIO.HIGH
+        if not self.is_pressed:
             if self.is_long_press_():
                 func = self.callback_released_long
             else:
@@ -35,8 +35,6 @@ class GPIOButton:
         else:
             func = self.callback_pressed
         self.trigger_time = time.time()
-        self.is_pressed = not self.is_pressed
-        print(self.is_pressed)
         if func:
             func()
 
