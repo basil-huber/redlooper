@@ -5,18 +5,18 @@ import time
 import threading
 
 print('hallo')
-window = MainWindow()
-lpw = LoopProgressWidget(master=window, width=200, height=300)
+window = MainWindow(fullscreen=True)
+lpw = LoopProgressWidget(master=window)
 
 
 def update():
     loop_len = 200
+    lpw.set_mode(lpw.Mode.PULSING)
     lpw.set_loop_length(loop_len)
     while True:
-        for i in range(0, loop_len):
-            print('loopi')
-            lpw.set_loop_position(i)
-            time.sleep(0.1)
+        for i in range(0, loop_len*100):
+            lpw.set_loop_position(i/100.0)
+            time.sleep(0.01)
 
 
 th = threading.Thread(target=update)

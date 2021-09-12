@@ -1,2 +1,5 @@
 from .looper_osc import Looper
-from .pypedal import PyPedal
+try:
+    from .pypedal import PyPedal
+except:
+    pass

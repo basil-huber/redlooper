@@ -55,7 +55,7 @@ def main():
                 if state == Looper.State.RECORDING:
                     lpw.set_mode(lpw.Mode.PULSING)
                 else:
-                    window.set_mode(lpw.Mode.FILLING)
+                    lpw.set_mode(lpw.Mode.FILLING)
 
             pedal.button_left.set_callback_released(button_left_released)
             pedal.button_left.set_callback_released_long(button_left_released_long)
